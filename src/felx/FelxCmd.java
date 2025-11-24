@@ -38,11 +38,6 @@ public class FelxCmd {
         }
         
         this.CATOS_ROOT_ABSOLUTE_PATH = new File(FileSystemManager.ROOT_DRIVE).getAbsolutePath();
-        
-//        currentDir = new File("Z:\\");
-//        if (!currentDir.exists()) {
-//            currentDir = new File(System.getProperty("user.dir"));
-//        }
     }
 
     public String getPrompt() {
@@ -62,8 +57,6 @@ public class FelxCmd {
         }
         
         return "\n" + displayPath + ">";
-
-        // return "\n" + currentDir.getAbsolutePath() + ">";
     }
 
     public String procesarComando(String linea) {
@@ -172,18 +165,29 @@ public class FelxCmd {
 
         if (argumento.equals("..")) {
             File padre = currentDir.getParentFile();
+            File catosRoot = new File(FileSystemManager.ROOT_DRIVE);
+
+            if (padre != null && padre.equals(catosRoot)) {
+
+                User currentUser = SessionManager.getCurrentUser();
+                
+                if (currentUser != null && !currentUser.isAdmin()) {
+                    return "Permisos insuficientes para acceder al directorio raíz (Z:/).\n";
+                }
+            }
+
             if (padre != null && padre.exists()) {
                 currentDir = padre;
                 return "";
             } else {
-                return "No hay carpeta padre.\n";
+                return "No hay carpeta padre válida.\n";
             }
         }
 
         if (argumento.contains("..")) {
             return "Comando no reconocido.\n";
         }
-
+        
         File nueva = new File(currentDir, argumento);
         if (nueva.exists() && nueva.isDirectory()) {
             currentDir = nueva;
