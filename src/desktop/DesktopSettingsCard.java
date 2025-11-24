@@ -94,19 +94,21 @@ public class DesktopSettingsCard extends JPanel {
         btnLogout.addActionListener(e -> owner.handleLogoutRequest(this));
         btnExit.addActionListener(e -> owner.handleExitRequest(this));
         
-        bubbleContent.add(Box.createHorizontalGlue());
+        bubbleContent.add(Box.createRigidArea(new Dimension(95, 0)));
         bubbleContent.add(btnLogout);
-        bubbleContent.add(Box.createRigidArea(new Dimension(40, 0)));
+        bubbleContent.add(Box.createRigidArea(new Dimension(-40, 0)));
         bubbleContent.add(btnExit);
+        bubbleContent.add(Box.createHorizontalGlue());
+        bubbleContent.add(Box.createVerticalGlue());
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 1.0;
-        gbc.weighty = 0.0;
+        gbc.weighty = 1.0;
         gbc.anchor = GridBagConstraints.NORTHEAST;
         
-        gbc.insets = new Insets(0, 5, 650, 65);
+        gbc.insets = new Insets(35, 0, 0, 100);
         
         centerWrapper.add(bubbleContent, gbc);
         add(centerWrapper, BorderLayout.CENTER);
