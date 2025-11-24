@@ -10,6 +10,8 @@ package desktop;
  * @author ashley
  */
 
+import felx.FelxWindow;
+
 import javax.swing.*;
 import java.awt.*;
 import java.time.LocalDateTime;
@@ -94,7 +96,7 @@ public class DesktopMainCard extends JPanel {
         btnLitterbox.addActionListener(e -> showNotImplemented("Litter Box"));
         btnScribble.addActionListener(e -> showNotImplemented("Scribble"));
         btnItuna.addActionListener(e -> showNotImplemented("iTuna"));
-        btnFelx.addActionListener(e -> showNotImplemented("FEL.X"));
+        btnFelx.addActionListener(e -> openAppWindow(new FelxWindow()));
         
         btnMenu.addActionListener(e -> owner.showMenu());
         
@@ -124,10 +126,20 @@ public class DesktopMainCard extends JPanel {
         dockPanel.add(btnMenu);
         dockPanel.add(Box.createVerticalStrut(28));
         
-        // btnMenu.addActionListener(e -> owner.showMenu());
-        
         return dockPanel;
         
+    }
+    
+    private void openAppWindow(java.awt.Window appWindow) {
+        
+        if (appWindow == null) {
+            return;
+        }
+        
+        if (owner != null && owner.getAppManager() != null) {
+            owner.getAppManager().registerApp(appWindow);
+        }
+        appWindow.setVisible(true);
     }
     
     protected JButton createIconButton(String resourcePath, String text, int iconSize) {
