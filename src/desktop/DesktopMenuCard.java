@@ -44,12 +44,12 @@ public class DesktopMenuCard extends JPanel {
         JPanel gridPanel = new JPanel(new GridLayout(2, 3, 90, 40));
         gridPanel.setOpaque(false);
         
-        gridPanel.add(createFinalIcon("/desktop/assets/Icon-1.png"));
-        gridPanel.add(createFinalIcon("/desktop/assets/Icon-2.png"));
-        gridPanel.add(createFinalIcon("/desktop/assets/Icon-3.png"));
-        gridPanel.add(createFinalIcon("/desktop/assets/Icon-4.png"));
-        gridPanel.add(createFinalIcon("/desktop/assets/Icon-5.png"));
-        gridPanel.add(createFinalIcon("/desktop/assets/Icon-6.png"));
+        gridPanel.add(createFinalIcon("/desktop/assets/Icon-1.png", "Litter Box"));
+        gridPanel.add(createFinalIcon("/desktop/assets/Icon-2.png", "Scribble"));
+        gridPanel.add(createFinalIcon("/desktop/assets/Icon-3.png", "iTuna"));
+        gridPanel.add(createFinalIcon("/desktop/assets/Icon-4.png", "FEL.X"));
+        gridPanel.add(createFinalIcon("/desktop/assets/Icon-5.png", "Photos"));
+        gridPanel.add(createFinalIcon("/desktop/assets/Icon-6.png", "Lynxstagram"));
         
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -73,13 +73,14 @@ public class DesktopMenuCard extends JPanel {
         
     }
     
-    private JPanel createFinalIcon(String resourcePath) {
+    private JPanel createFinalIcon(String resourcePath, String appName) {
         
         JPanel panel = new JPanel();
         panel.setOpaque(false);
         panel.setLayout(new BorderLayout());
 
         JButton button = createIconButton(resourcePath, GRID_ICON_SIZE);
+        button.addActionListener(e -> showNotImplemented(appName));
         panel.add(button, BorderLayout.CENTER);
 
         return panel;
@@ -99,6 +100,17 @@ public class DesktopMenuCard extends JPanel {
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         
         return button;
+        
+    }
+    
+    private void showNotImplemented(String appName) {
+        
+        JOptionPane.showMessageDialog(
+                this,
+                appName + " aún no está implementado en CatOS.",
+                "Info",
+                JOptionPane.INFORMATION_MESSAGE
+        );
         
     }
 

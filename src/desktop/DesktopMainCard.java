@@ -89,6 +89,15 @@ public class DesktopMainCard extends JPanel {
         
         JButton btnMenu = createIconButton("/desktop/assets/menu.png", null, 88);
         
+        btnLynx.addActionListener(e -> showNotImplemented("Lynxstagram"));
+        btnPhotos.addActionListener(e -> showNotImplemented("Photos"));
+        btnLitterbox.addActionListener(e -> showNotImplemented("Litter Box"));
+        btnScribble.addActionListener(e -> showNotImplemented("Scribble"));
+        btnItuna.addActionListener(e -> showNotImplemented("iTuna"));
+        btnFelx.addActionListener(e -> showNotImplemented("FEL.X"));
+        
+        btnMenu.addActionListener(e -> owner.showMenu());
+        
         btnLynx.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnPhotos.setAlignmentX(Component.CENTER_ALIGNMENT);
         btnLitterbox.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -115,7 +124,7 @@ public class DesktopMainCard extends JPanel {
         dockPanel.add(btnMenu);
         dockPanel.add(Box.createVerticalStrut(28));
         
-        btnMenu.addActionListener(e -> owner.showMenu());
+        // btnMenu.addActionListener(e -> owner.showMenu());
         
         return dockPanel;
         
@@ -144,6 +153,16 @@ public class DesktopMainCard extends JPanel {
         
         return button;
         
+    }
+    
+    private void showNotImplemented(String appName) {
+        
+        JOptionPane.showMessageDialog(
+                this,
+                appName + " aún no está implementado en CatOS.",
+                "Info",
+                JOptionPane.INFORMATION_MESSAGE
+        );
     }
     
     private void updateDateTime() {
