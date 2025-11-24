@@ -14,20 +14,56 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import admin.core.User;
+import admin.core.FileSystemManager;
+import admin.core.SessionManager;
+
 public class FelxCmd {
     
     private File currentDir;
+    
+    private final String CATOS_ROOT_ABSOLUTE_PATH;
 
     public FelxCmd() {
-        currentDir = new File("Z:\\");
-
-        if (!currentDir.exists()) {
+        
+        User currentUser = SessionManager.getCurrentUser();
+        
+        if (currentUser == null) {
             currentDir = new File(System.getProperty("user.dir"));
+        } else {
+            String userRootPath = FileSystemManager.getUserRoot(currentUser.getUsername());
+            this.currentDir = new File(userRootPath);
+            
+            FileSystemManager.createUserFolders(currentUser.getUsername());
         }
+        
+        this.CATOS_ROOT_ABSOLUTE_PATH = new File(FileSystemManager.ROOT_DRIVE).getAbsolutePath();
+        
+//        currentDir = new File("Z:\\");
+//        if (!currentDir.exists()) {
+//            currentDir = new File(System.getProperty("user.dir"));
+//        }
     }
 
     public String getPrompt() {
-        return "\n" + currentDir.getAbsolutePath() + ">";
+        
+        String fullPath = currentDir.getAbsolutePath();
+        String displayPath;
+        
+        String rootName = FileSystemManager.ROOT_DRIVE.replace(File.separator, "").replace("/", "");
+        
+        int zIndex = fullPath.indexOf(rootName);
+        
+        if (zIndex != -1) {
+            displayPath = fullPath.substring(zIndex);
+            displayPath = displayPath.replace(File.separator, "/");
+        } else {
+            displayPath = fullPath;
+        }
+        
+        return "\n" + displayPath + ">";
+
+        // return "\n" + currentDir.getAbsolutePath() + ">";
     }
 
     public String procesarComando(String linea) {
