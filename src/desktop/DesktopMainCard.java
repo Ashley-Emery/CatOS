@@ -42,7 +42,7 @@ public class DesktopMainCard extends JPanel {
         topPanel.setOpaque(false);
         topPanel.setBorder(BorderFactory.createEmptyBorder(15, 0, 0, 35));
         
-        JPanel topRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, 5));
+        JPanel topRight = new JPanel(new FlowLayout(FlowLayout.RIGHT, 20, -8));
         topRight.setOpaque(false);
         
         lblDateTime = new JLabel();

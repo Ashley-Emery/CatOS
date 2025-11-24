@@ -11,6 +11,7 @@ package admin;
 
 
 import admin.core.SessionManager;
+import desktop.DesktopWindow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -108,9 +109,11 @@ public class AdminLoginCard extends JPanel {
     }
 
     private void handleAdminLogin() {
+        
         String pwd = new String(passwordField.getPassword());
 
         boolean ok = SessionManager.login("admin", pwd);
+        
         if (!ok) {
             JOptionPane.showMessageDialog(
                     this,
@@ -119,12 +122,18 @@ public class AdminLoginCard extends JPanel {
                     JOptionPane.ERROR_MESSAGE
             );
         } else {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Welcome, admin!",
-                    "CatOS",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            
+            openDesktopAndCloseLogin();
+        }
+    }
+    
+    private void openDesktopAndCloseLogin() {
+        
+        SwingUtilities.invokeLater(() -> new DesktopWindow().setVisible(true));
+        
+        java.awt.Window w = SwingUtilities.getWindowAncestor(this);
+        if (w != null) {
+            w.dispose();
         }
     }
 

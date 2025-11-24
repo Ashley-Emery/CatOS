@@ -10,6 +10,7 @@ package admin;
  */
 
 import admin.core.SessionManager;
+import desktop.DesktopWindow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -128,13 +129,18 @@ public class UserLoginCard extends JPanel {
                     JOptionPane.ERROR_MESSAGE
             );
         } else {
-            // TODO: ir al escritorio de ese usuario
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Welcome, " + user + "!",
-                    "CatOS",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            
+            openDesktopAndCloseLogin();
+        }
+    }
+    
+    private void openDesktopAndCloseLogin() {
+        
+        SwingUtilities.invokeLater(() -> new DesktopWindow().setVisible(true));
+        
+        java.awt.Window w = SwingUtilities.getWindowAncestor(this);
+        if (w != null) {
+            w.dispose();
         }
     }
 
