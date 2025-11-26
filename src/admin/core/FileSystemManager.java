@@ -35,9 +35,9 @@ public class FileSystemManager {
             return false;
         }
 
-        File litterBox = new File(userRoot, "Litter Box");
-        File iTuna = new File(userRoot, "iTuna");
-        File photos = new File(userRoot, "Photos");
+        File litterBox = new File(userRoot, "Documents");
+        File iTuna = new File(userRoot, "Music");
+        File photos = new File(userRoot, "Pictures");
 
         boolean ok = true;
         if (!litterBox.exists()) ok &= litterBox.mkdirs();
