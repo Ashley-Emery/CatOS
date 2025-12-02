@@ -43,6 +43,14 @@ public class HistoryManager {
         currentIndex++;
         return history.get(currentIndex);
     }
+    
+    public boolean canGoBack() {
+        return currentIndex > 0;
+    }
+    
+    public boolean canGoForward() {
+        return currentIndex < history.size() - 1;
+    }
 }
 
 

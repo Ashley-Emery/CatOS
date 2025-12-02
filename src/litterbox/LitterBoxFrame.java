@@ -116,23 +116,21 @@ public class LitterBoxFrame extends JFrame {
     public void goBack() {
         HistoryLocation loc = historyManager.goBack();
         if (loc != null) {
-            openFromHistory(loc, false);
+            openFromHistory(loc);
         }
+        homeViewPanel.updateHistoryButtons();
     }
 
     public void goForward() {
         HistoryLocation loc = historyManager.goForward();
         if (loc != null) {
-            openFromHistory(loc, false);
+            openFromHistory(loc);
         }
+        homeViewPanel.updateHistoryButtons();
     }
 
-    private void openFromHistory(HistoryLocation loc, boolean pushAgain) {
+    private void openFromHistory(HistoryLocation loc) {
         if (loc == null) return;
-
-        if (pushAgain) {
-            historyManager.pushLocation(loc);
-        }
 
         switch (loc.getType()) {
             case HOME -> showHome();
@@ -140,4 +138,5 @@ public class LitterBoxFrame extends JFrame {
             case TRASH -> showTrash();
         }
     }
+    
 }

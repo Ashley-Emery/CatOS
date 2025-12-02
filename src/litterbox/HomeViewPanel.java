@@ -253,6 +253,11 @@ public class HomeViewPanel extends JPanel {
         
         button.setPreferredSize(new Dimension(30, 30));
     }
+    
+    public void updateHistoryButtons() {
+        btnBack.setEnabled(frame.getHistoryManager().canGoBack());
+        btnForward.setEnabled(frame.getHistoryManager().canGoForward());
+    }
 
 
     private void doSearch() {

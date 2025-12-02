@@ -39,38 +39,38 @@ public class CustomFileTreeRenderer extends DefaultTreeCellRenderer {
             boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
-        
-        setForeground(Color.WHITE);
-        
-        setBackgroundNonSelectionColor(Color.decode("#545454"));
 
         if (value instanceof DefaultMutableTreeNode node) {
             Object userObj = node.getUserObject();
 
-            if (userObj instanceof String name && "admin".equals(name)) {
-                setIcon(adminIcon);
-                setToolTipText("Directorio principal del usuario");
+            if (userObj instanceof String name) {
+                setText(name); 
+                if ("admin".equals(name)) {
+                    setIcon(adminIcon);
+                    setToolTipText("Directorio principal del usuario");
+                } 
             } 
-            
+
             else if (userObj instanceof File f) {
+                setText(f.getName());
+
                 String name = f.getName();
-                
+
                 if (f.isDirectory()) {
-                    
                     switch (name) {
                         case "Pictures" -> setIcon(picturesIcon);
                         case "Music" -> setIcon(musicIcon);
                         case "Documents" -> setIcon(documentsIcon);
                         default -> setIcon(defaultFolderIcon);
                     }
-                    setToolTipText(f.getAbsolutePath());
-                } else {
-                    
-                    setToolTipText(f.getAbsolutePath());
                 }
+                setToolTipText(f.getAbsolutePath());
             }
         }
-        
+
+        setForeground(Color.WHITE);
+        setBackgroundNonSelectionColor(Color.decode("#545454"));
+
         return this;
     }
 }
