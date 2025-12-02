@@ -57,6 +57,8 @@ public class HomeViewPanel extends JPanel {
         tree = new JTree(treeModel);
         tree.setRootVisible(true);
         tree.setShowsRootHandles(true);
+        
+        tree.setCellRenderer(new CustomFileTreeRenderer());
 
         refreshTree();
 
