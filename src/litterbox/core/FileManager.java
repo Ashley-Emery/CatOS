@@ -77,6 +77,11 @@ public class FileManager {
         if (idx < 0) return "";
         return name.substring(idx + 1);
     }
+    
+    public FileInfo findFileInfo(File f) {
+        if (f == null) return null;
+        return new FileInfo(f, classify(f));
+    }
 
     // ====== Operaciones de FS ======
 

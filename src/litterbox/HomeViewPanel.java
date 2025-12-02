@@ -14,7 +14,6 @@ import litterbox.core.*;
 import javax.swing.*;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
-import javax.swing.table.JTableHeader;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
@@ -31,7 +30,9 @@ public class HomeViewPanel extends JPanel {
     private final JButton btnBack = new JButton();
     private final JButton btnForward = new JButton();
     private final JComboBox<String> comboLocation = new JComboBox<>();
-    private final JButton btnSearchBar = new JButton();
+    
+    private final JButton btnSearch = new JButton("Search"); 
+    
     private final JButton btnUpload = new JButton("Upload");
     private final JButton btnNewFolder = new JButton("New Folder");
     private final JButton btnMove = new JButton("Move");
@@ -40,8 +41,6 @@ public class HomeViewPanel extends JPanel {
 
     private final JTree tree;
     private final DefaultTreeModel treeModel;
-    private final JTable table;
-    private final FileTableModel tableModel = new FileTableModel();
 
     private File currentFolder;
 
@@ -69,10 +68,8 @@ public class HomeViewPanel extends JPanel {
                     Object userObj = node.getUserObject();
                     if (userObj instanceof File file) {
                         currentFolder = file.isDirectory() ? file : file.getParentFile();
-                        refreshTable();
                     } else if ("admin".equals(userObj)) {
                         currentFolder = frame.getPathUtils().getAdminRoot();
-                        refreshTable();
                     }
                 }
             }
@@ -89,7 +86,6 @@ public class HomeViewPanel extends JPanel {
                         Object userObj = node.getUserObject();
                         if (userObj instanceof File f) {
                             if (f.isDirectory()) {
-                                // Navegar a Folder View
                                 File rootLogical = frame.getPathUtils().findRootLogicalFor(f);
                                 frame.navigateToFolderFromUI(f, rootLogical);
                             } else {
@@ -103,54 +99,9 @@ public class HomeViewPanel extends JPanel {
 
         JScrollPane treeScroll = new JScrollPane(tree);
 
-        table = new JTable(tableModel);
-        table.setFillsViewportHeight(true);
-        table.setBackground(Color.decode("#36383d"));
-        table.setForeground(Color.WHITE);
-        table.setGridColor(Color.DARK_GRAY);
-
-        JTableHeader header = table.getTableHeader();
-        header.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int col = table.columnAtPoint(e.getPoint());
-                SortMode mode = switch (col) {
-                    case 0 -> SortMode.NAME;
-                    case 1 -> SortMode.DATE;
-                    case 2 -> SortMode.TYPE;
-                    case 3 -> SortMode.SIZE;
-                    default -> SortMode.NAME;
-                };
-                frame.getFileManager().toggleSort(mode);
-                refreshTable();
-            }
-        });
-
-        table.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2 && table.getSelectedRow() != -1) {
-                    FileInfo fi = tableModel.getFileInfoAt(table.getSelectedRow());
-                    if (fi == null) return;
-                    File f = fi.getFile();
-                    if (f.isDirectory()) {
-                        File rootLogical = frame.getPathUtils().findRootLogicalFor(f);
-                        frame.navigateToFolderFromUI(f, rootLogical);
-                    } else {
-                        showNotImplementedDialog(f);
-                    }
-                }
-            }
-        });
-
-        JScrollPane tableScroll = new JScrollPane(table);
-
-        JSplitPane split = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, treeScroll, tableScroll);
-        split.setDividerLocation(250);
-        add(split, BorderLayout.CENTER);
+        add(treeScroll, BorderLayout.CENTER);
 
         currentFolder = frame.getPathUtils().getAdminRoot();
-        refreshTable();
     }
 
     private JPanel buildTopBar() {
@@ -182,7 +133,6 @@ public class HomeViewPanel extends JPanel {
             } else if ("Trash".equals(sel)) {
                 frame.navigateToTrashFromUI();
             } else {
-                // Se asume que es una carpeta raíz en admin
                 File root = new File(frame.getPathUtils().getAdminRoot(), sel);
                 if (root.exists() && root.isDirectory()) {
                     frame.navigateToFolderFromUI(root, root);
@@ -194,14 +144,12 @@ public class HomeViewPanel extends JPanel {
 
         JPanel center = new JPanel();
         center.setOpaque(false);
-        btnSearchBar.setIcon(IconLoader.load("search_bar.png"));
-        btnSearchBar.setBorderPainted(false);
-        btnSearchBar.setContentAreaFilled(false);
-        btnSearchBar.addActionListener(e -> doSearch());
-        center.add(btnSearchBar);
 
         JPanel right = new JPanel();
         right.setOpaque(false);
+
+        btnSearch.setIcon(IconLoader.load("search_bar.png"));
+        btnSearch.addActionListener(e -> doSearch());
 
         btnUpload.setIcon(IconLoader.load("upload.png"));
         btnNewFolder.setIcon(IconLoader.load("new_folder.png"));
@@ -215,6 +163,7 @@ public class HomeViewPanel extends JPanel {
         btnCopy.addActionListener(e -> doCopy());
         btnDelete.addActionListener(e -> doDeleteSoft());
 
+        right.add(btnSearch); 
         right.add(btnUpload);
         right.add(btnNewFolder);
         right.add(btnMove);
@@ -230,14 +179,21 @@ public class HomeViewPanel extends JPanel {
 
     private void doSearch() {
         java.awt.Window w = SwingUtilities.getWindowAncestor(this);
-        SearchDialog dlg = new SearchDialog((w instanceof java.awt.Frame) ? (java.awt.Frame) w : null);
         
-        String query = dlg.showDialog();
+        SearchDialog queryDlg = new SearchDialog((w instanceof java.awt.Frame) ? (java.awt.Frame) w : null);
+        String query = queryDlg.showDialog();
                 
         if (query == null || query.isEmpty()) return;
 
+        // Realizamos la búsqueda
         List<FileInfo> results = frame.getFileManager().searchInAdmin(query);
-        tableModel.setFiles(results);
+        
+        // Creamos y mostramos el nuevo diálogo de resultados
+        SearchResultsDialog resultsDlg = new SearchResultsDialog(
+            (w instanceof java.awt.Frame) ? (java.awt.Frame) w : null, 
+            results
+        );
+        resultsDlg.setVisible(true);
     }
 
     private void doUpload() {
@@ -252,12 +208,17 @@ public class HomeViewPanel extends JPanel {
     }
 
     private void doNewFolder() {
-        if (currentFolder == null) return;
-        String name = JOptionPane.showInputDialog(this, "New folder name:", "New Folder",
+        File targetFolder = currentFolder;
+        
+        if (targetFolder == null) {
+             targetFolder = frame.getPathUtils().getAdminRoot();
+        }
+
+        String name = JOptionPane.showInputDialog(this, "New folder name (in " + targetFolder.getName() + "):", "New Folder",
                 JOptionPane.PLAIN_MESSAGE);
         if (name == null || name.isBlank()) return;
         try {
-            frame.getFileManager().createFolder(currentFolder, name.trim());
+            frame.getFileManager().createFolder(targetFolder, name.trim());
             refreshAll();
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this, "Error creating folder: " + ex.getMessage(),
@@ -265,17 +226,26 @@ public class HomeViewPanel extends JPanel {
         }
     }
 
-    private FileInfo getSelectedFileInfoFromTable() {
-        int row = table.getSelectedRow();
-        if (row < 0) {
-            JOptionPane.showMessageDialog(this, "Please select an item in the list.");
-            return null;
+    private FileInfo getSelectedFileInfoFromTree() {
+        TreePath path = tree.getSelectionPath();
+        if (path == null) {
+             JOptionPane.showMessageDialog(this, "Please select an item in the tree.");
+             return null;
         }
-        return tableModel.getFileInfoAt(row);
+        Object comp = path.getLastPathComponent();
+        if (comp instanceof DefaultMutableTreeNode node) {
+            Object userObj = node.getUserObject();
+            if (userObj instanceof File f) {
+                return frame.getFileManager().findFileInfo(f);
+            }
+        }
+        JOptionPane.showMessageDialog(this, "Please select a valid file or folder.");
+        return null;
+            
     }
 
     private void doMove() {
-        FileInfo fi = getSelectedFileInfoFromTable();
+        FileInfo fi = getSelectedFileInfoFromTree();
         if (fi == null) return;
 
         String destPath = JOptionPane.showInputDialog(this, "Destination path (within admin):",
@@ -292,7 +262,7 @@ public class HomeViewPanel extends JPanel {
     }
 
     private void doCopy() {
-        FileInfo fi = getSelectedFileInfoFromTable();
+        FileInfo fi = getSelectedFileInfoFromTree();
         if (fi == null) return;
 
         JTextField txtName = new JTextField(fi.getFile().getName(), 20);
@@ -320,7 +290,7 @@ public class HomeViewPanel extends JPanel {
     }
 
     private void doDeleteSoft() {
-        FileInfo fi = getSelectedFileInfoFromTable();
+        FileInfo fi = getSelectedFileInfoFromTree();
         if (fi == null) return;
 
         File f = fi.getFile();
@@ -358,7 +328,6 @@ public class HomeViewPanel extends JPanel {
     public void refreshAll() {
         refreshTree();
         refreshDropdown();
-        refreshTable();
     }
 
     public void refreshTree() {
@@ -400,13 +369,5 @@ public class HomeViewPanel extends JPanel {
         }
 
         comboLocation.setSelectedItem("Home");
-    }
-
-    private void refreshTable() {
-        if (currentFolder == null) {
-            currentFolder = frame.getPathUtils().getAdminRoot();
-        }
-        List<FileInfo> infos = frame.getFileManager().listFolder(currentFolder);
-        tableModel.setFiles(infos);
     }
 }
