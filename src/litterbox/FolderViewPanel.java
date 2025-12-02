@@ -96,14 +96,17 @@ public class FolderViewPanel extends JPanel {
 
         JPanel left = new JPanel();
         left.setOpaque(false);
-        btnBack.setIcon(IconLoader.load("backward_button.png"));
-        btnForward.setIcon(IconLoader.load("forward_button.png"));
+        btnBack.setIcon(IconLoader.load("backward_button.png", 24));
+        btnForward.setIcon(IconLoader.load("forward_button.png", 24));
         btnBack.addActionListener(e -> frame.goBack());
         btnForward.addActionListener(e -> frame.goForward());
         left.add(btnBack);
         left.add(btnForward);
         left.add(comboLocation);
         panel.add(left, BorderLayout.WEST);
+        
+        makeIconOnlyButton(btnBack);
+        makeIconOnlyButton(btnForward);
 
         comboLocation.addActionListener(e -> {
             String sel = (String) comboLocation.getSelectedItem();
@@ -122,7 +125,7 @@ public class FolderViewPanel extends JPanel {
 
         JPanel center = new JPanel();
         center.setOpaque(false);
-        btnSearchBar.setIcon(IconLoader.load("search_bar.png"));
+        btnSearchBar.setIcon(IconLoader.load("search_bar.png", 150, 40));
         btnSearchBar.setBorderPainted(false);
         btnSearchBar.setContentAreaFilled(false);
         btnSearchBar.addActionListener(e -> doSearch());
@@ -131,11 +134,20 @@ public class FolderViewPanel extends JPanel {
 
         JPanel right = new JPanel();
         right.setOpaque(false);
+        right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
         btnUpload.setIcon(IconLoader.load("upload.png"));
         btnNewFolder.setIcon(IconLoader.load("new_folder.png"));
         btnMove.setIcon(IconLoader.load("move.png"));
         btnCopy.setIcon(IconLoader.load("copy.png"));
         btnDelete.setIcon(IconLoader.load("delete.png"));
+        
+        setActionButtonStyle(btnUpload, "upload.png");
+        setActionButtonStyle(btnNewFolder, "new_folder.png");
+        setActionButtonStyle(btnMove, "move.png");
+        setActionButtonStyle(btnCopy, "copy.png");
+        setActionButtonStyle(btnDelete, "delete.png");
+        
+        btnSearchBar.setIcon(IconLoader.load("search_bar.png", 150, 40));
 
         btnUpload.addActionListener(e -> doUpload());
         btnNewFolder.addActionListener(e -> doNewFolder());
@@ -309,4 +321,33 @@ public class FolderViewPanel extends JPanel {
                 "Not implemented",
                 JOptionPane.INFORMATION_MESSAGE);
     }
+    
+    private void setActionButtonStyle(JButton button, String iconName) {
+        final int BTN_WIDTH = 100;
+        final int BTN_HEIGHT = 50;
+
+        Icon scaledIcon = IconLoader.load(iconName, BTN_WIDTH, BTN_HEIGHT); 
+        button.setIcon(scaledIcon);
+
+        button.setText(null); 
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setPreferredSize(new Dimension(BTN_WIDTH, BTN_HEIGHT));
+    }
+    
+    private void makeIconOnlyButton(JButton button) {
+        button.setText(null); 
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(30, 30));
+    }
+    
+    public void updateHistoryButtons() {
+        btnBack.setEnabled(frame.getHistoryManager().canGoBack());
+        btnForward.setEnabled(frame.getHistoryManager().canGoForward());
+    }
+    
 }
