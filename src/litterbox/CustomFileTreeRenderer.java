@@ -18,13 +18,16 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 
 public class CustomFileTreeRenderer extends DefaultTreeCellRenderer {
-
-    // Iconos personalizados
+    
     private final Icon adminIcon;
     private final Icon picturesIcon;
     private final Icon musicIcon;
     private final Icon documentsIcon;
     private final Icon defaultFolderIcon;
+    
+    private final Icon pictureFileIcon;
+    private final Icon musicFileIcon;
+    private final Icon defaultFileIcon;
 
     public CustomFileTreeRenderer() {
         adminIcon = IconLoader.load("user_main_dir.png");
@@ -32,6 +35,10 @@ public class CustomFileTreeRenderer extends DefaultTreeCellRenderer {
         musicIcon = IconLoader.load("music.png");
         documentsIcon = IconLoader.load("files.png");
         defaultFolderIcon = IconLoader.load("new_dir.png");
+        
+        pictureFileIcon = IconLoader.load("photo.png");
+        musicFileIcon = IconLoader.load("tape_recorder.png");
+        defaultFileIcon = IconLoader.load("file.png");
     }
 
     @Override
@@ -63,6 +70,15 @@ public class CustomFileTreeRenderer extends DefaultTreeCellRenderer {
                         case "Documents" -> setIcon(documentsIcon);
                         default -> setIcon(defaultFolderIcon);
                     }
+                } else {
+                    String ext = getExtension(f.getName()).toLowerCase();
+
+                    switch (ext) {
+                        case "png", "jpg", "jpeg" -> setIcon(pictureFileIcon);
+                        case "mp3" -> setIcon(musicFileIcon);
+                        case "txt", "doc", "docx", "pdf" -> setIcon(defaultFileIcon);
+                        default -> setIcon(defaultFileIcon);
+                    }
                 }
                 setToolTipText(f.getAbsolutePath());
             }
@@ -72,5 +88,11 @@ public class CustomFileTreeRenderer extends DefaultTreeCellRenderer {
         setBackgroundNonSelectionColor(Color.decode("#545454"));
 
         return this;
+    }
+    
+    private String getExtension(String name) {
+        int idx = name.lastIndexOf('.');
+        if (idx < 0) return "";
+        return name.substring(idx + 1);
     }
 }
