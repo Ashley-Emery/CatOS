@@ -9,6 +9,7 @@ package litterbox;
  * @author ashley
  */
 
+import java.awt.Color;
 import java.awt.Component;
 import java.io.File;
 import javax.swing.Icon;
@@ -38,6 +39,10 @@ public class CustomFileTreeRenderer extends DefaultTreeCellRenderer {
             boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
         super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
+        
+        setForeground(Color.WHITE);
+        
+        setBackgroundNonSelectionColor(Color.decode("#545454"));
 
         if (value instanceof DefaultMutableTreeNode node) {
             Object userObj = node.getUserObject();

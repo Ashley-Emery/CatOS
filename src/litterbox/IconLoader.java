@@ -16,11 +16,14 @@ import java.net.URL;
 public class IconLoader {
 
     public static ImageIcon load(String name) {
-
-        return load(name, 24);
+        return load(name, 24, 24);
     }
     
     public static ImageIcon load(String name, int size) {
+        return load(name, size, size);
+    }
+    
+    public static ImageIcon load(String name, int width, int height) {
         String path = "/litterbox/assets/" + name;
         URL url = IconLoader.class.getResource(path);
         if (url == null) {
@@ -30,9 +33,9 @@ public class IconLoader {
         
         ImageIcon originalIcon = new ImageIcon(url);
 
-        if (size > 0) {
+        if (width > 0 && height > 0) {
             Image image = originalIcon.getImage();
-            Image scaledImage = image.getScaledInstance(size, size, Image.SCALE_SMOOTH);
+            Image scaledImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
             return new ImageIcon(scaledImage);
         }
 

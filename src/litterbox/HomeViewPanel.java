@@ -28,16 +28,16 @@ public class HomeViewPanel extends JPanel {
     private final LitterBoxFrame frame;
 
     private final JButton btnBack = new JButton();
-    private final JButton btnForward = new JButton();
+    private final JButton btnForward = new JButton("Forward");
     private final JComboBox<String> comboLocation = new JComboBox<>();
     
-    private final JButton btnSearch = new JButton("Search"); 
+    private final JButton btnSearch = new JButton(); 
     
-    private final JButton btnUpload = new JButton("Upload");
-    private final JButton btnNewFolder = new JButton("New Folder");
-    private final JButton btnMove = new JButton("Move");
-    private final JButton btnCopy = new JButton("Copy");
-    private final JButton btnDelete = new JButton("Delete");
+    private final JButton btnUpload = new JButton();
+    private final JButton btnNewFolder = new JButton();
+    private final JButton btnMove = new JButton();
+    private final JButton btnCopy = new JButton();
+    private final JButton btnDelete = new JButton();
 
     private final JTree tree;
     private final DefaultTreeModel treeModel;
@@ -47,7 +47,7 @@ public class HomeViewPanel extends JPanel {
     public HomeViewPanel(LitterBoxFrame frame) {
         this.frame = frame;
         setLayout(new BorderLayout());
-        setBackground(Color.decode("#36383d"));
+        setBackground(Color.decode("#545454"));
 
         JPanel top = buildTopBar();
         add(top, BorderLayout.NORTH);
@@ -57,6 +57,9 @@ public class HomeViewPanel extends JPanel {
         tree = new JTree(treeModel);
         tree.setRootVisible(true);
         tree.setShowsRootHandles(true);
+        
+        tree.setBackground(Color.decode("#36383d"));
+        tree.setForeground(Color.WHITE);
         
         tree.setCellRenderer(new CustomFileTreeRenderer());
 
@@ -113,8 +116,11 @@ public class HomeViewPanel extends JPanel {
         JPanel left = new JPanel();
         left.setOpaque(false);
 
-        btnBack.setIcon(IconLoader.load("backward_button.png"));
-        btnForward.setIcon(IconLoader.load("forward_button.png"));
+        btnBack.setIcon(IconLoader.load("backward_button.png", 24));
+        btnForward.setIcon(IconLoader.load("forward_button.png", 24));
+        
+        makeIconOnlyButton(btnBack);
+        makeIconOnlyButton(btnForward);
 
         btnBack.addActionListener(e -> frame.goBack());
         btnForward.addActionListener(e -> frame.goForward());
@@ -149,20 +155,31 @@ public class HomeViewPanel extends JPanel {
 
         JPanel right = new JPanel();
         right.setOpaque(false);
+        right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5)); // Usamos FlowLayout para separar los botones
 
-        btnSearch.setIcon(IconLoader.load("search_bar.png"));
+        btnSearch.setIcon(IconLoader.load("search_bar.png", 85)); // Tamaño de 80x30 o similar si conoces el radio. Usaré un tamaño grande y lo ajustaremos.
+        btnUpload.setIcon(IconLoader.load("upload.png", 85)); 
+        btnNewFolder.setIcon(IconLoader.load("new_folder.png", 85));
+        btnMove.setIcon(IconLoader.load("move.png", 85));
+        btnCopy.setIcon(IconLoader.load("copy.png", 85));
+        btnDelete.setIcon(IconLoader.load("delete.png", 85));
+        
+        setActionButtonStyle(btnSearch, "search_bar.png");
         btnSearch.addActionListener(e -> doSearch());
-
-        btnUpload.setIcon(IconLoader.load("upload.png"));
-        btnNewFolder.setIcon(IconLoader.load("new_folder.png"));
-        btnMove.setIcon(IconLoader.load("move.png"));
-        btnCopy.setIcon(IconLoader.load("copy.png"));
-        btnDelete.setIcon(IconLoader.load("delete.png"));
-
+        
+        setActionButtonStyle(btnUpload, "upload.png");
         btnUpload.addActionListener(e -> doUpload());
+        
+        setActionButtonStyle(btnNewFolder, "new_folder.png");
         btnNewFolder.addActionListener(e -> doNewFolder());
+        
+        setActionButtonStyle(btnMove, "move.png");
         btnMove.addActionListener(e -> doMove());
+        
+        setActionButtonStyle(btnCopy, "copy.png");
         btnCopy.addActionListener(e -> doCopy());
+        
+        setActionButtonStyle(btnDelete, "delete.png");
         btnDelete.addActionListener(e -> doDeleteSoft());
 
         right.add(btnSearch); 
@@ -178,6 +195,65 @@ public class HomeViewPanel extends JPanel {
 
         return panel;
     }
+    
+    private void setSearchButtonStyle(JButton button, String iconName) {
+        
+        final int BTN_WIDTH = 150; // Más ancho para la barra de búsqueda
+        final int BTN_HEIGHT = 40; // Mantener la misma altura de los otros botones
+
+        // Cargamos la imagen con las nuevas dimensiones (IconLoader.load(name, width, height))
+        Icon scaledIcon = IconLoader.load(iconName, BTN_WIDTH, BTN_HEIGHT); 
+        button.setIcon(scaledIcon);
+
+        // Ocultamos el texto real
+        button.setText(null); 
+
+        // Estilos para hacer que parezca solo la imagen
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        
+        // El tamaño del botón coincide con el tamaño del icono
+        button.setPreferredSize(new Dimension(BTN_WIDTH, BTN_HEIGHT));
+    }
+    
+    private void setIconButtonStyle(JButton button) {
+        button.setText(null);
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(30, 30));
+    }
+    
+    private void setActionButtonStyle(JButton button, String iconName) {
+        // Dimensiones estándar para los botones de acción (100x40, como definimos en la corrección anterior)
+        final int BTN_WIDTH = 100;
+        final int BTN_HEIGHT = 50;
+
+        Icon scaledIcon = IconLoader.load(iconName, BTN_WIDTH, BTN_HEIGHT); 
+        button.setIcon(scaledIcon);
+
+        button.setText(null); 
+
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        
+        button.setPreferredSize(new Dimension(BTN_WIDTH, BTN_HEIGHT));
+    }
+
+    private void makeIconOnlyButton(JButton button) {
+
+        button.setText(null); 
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        
+        button.setPreferredSize(new Dimension(30, 30));
+    }
+
 
     private void doSearch() {
         java.awt.Window w = SwingUtilities.getWindowAncestor(this);
