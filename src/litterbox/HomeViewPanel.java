@@ -155,9 +155,9 @@ public class HomeViewPanel extends JPanel {
 
         JPanel right = new JPanel();
         right.setOpaque(false);
-        right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5)); // Usamos FlowLayout para separar los botones
+        right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
 
-        btnSearch.setIcon(IconLoader.load("search_bar.png", 85)); // Tamaño de 80x30 o similar si conoces el radio. Usaré un tamaño grande y lo ajustaremos.
+        btnSearch.setIcon(IconLoader.load("search_bar.png", 85));
         btnUpload.setIcon(IconLoader.load("upload.png", 85)); 
         btnNewFolder.setIcon(IconLoader.load("new_folder.png", 85));
         btnMove.setIcon(IconLoader.load("move.png", 85));
@@ -198,23 +198,19 @@ public class HomeViewPanel extends JPanel {
     
     private void setSearchButtonStyle(JButton button, String iconName) {
         
-        final int BTN_WIDTH = 150; // Más ancho para la barra de búsqueda
-        final int BTN_HEIGHT = 40; // Mantener la misma altura de los otros botones
-
-        // Cargamos la imagen con las nuevas dimensiones (IconLoader.load(name, width, height))
+        final int BTN_WIDTH = 150;
+        final int BTN_HEIGHT = 40;
+        
         Icon scaledIcon = IconLoader.load(iconName, BTN_WIDTH, BTN_HEIGHT); 
         button.setIcon(scaledIcon);
-
-        // Ocultamos el texto real
+        
         button.setText(null); 
-
-        // Estilos para hacer que parezca solo la imagen
+        
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setFocusPainted(false);
         button.setMargin(new Insets(0, 0, 0, 0));
         
-        // El tamaño del botón coincide con el tamaño del icono
         button.setPreferredSize(new Dimension(BTN_WIDTH, BTN_HEIGHT));
     }
     
@@ -227,15 +223,15 @@ public class HomeViewPanel extends JPanel {
     }
     
     private void setActionButtonStyle(JButton button, String iconName) {
-        // Dimensiones estándar para los botones de acción (100x40, como definimos en la corrección anterior)
+        
         final int BTN_WIDTH = 100;
         final int BTN_HEIGHT = 50;
-
+        
         Icon scaledIcon = IconLoader.load(iconName, BTN_WIDTH, BTN_HEIGHT); 
         button.setIcon(scaledIcon);
-
+        
         button.setText(null); 
-
+        
         button.setBorderPainted(false);
         button.setContentAreaFilled(false);
         button.setFocusPainted(false);
@@ -266,12 +262,11 @@ public class HomeViewPanel extends JPanel {
         SearchDialog queryDlg = new SearchDialog((w instanceof java.awt.Frame) ? (java.awt.Frame) w : null);
         String query = queryDlg.showDialog();
                 
-        if (query == null || query.isEmpty()) return;
-
-        // Realizamos la búsqueda
+        if (query == null || query.isEmpty())
+            return;
+        
         List<FileInfo> results = frame.getFileManager().searchInAdmin(query);
         
-        // Creamos y mostramos el nuevo diálogo de resultados
         SearchResultsDialog resultsDlg = new SearchResultsDialog(
             (w instanceof java.awt.Frame) ? (java.awt.Frame) w : null, 
             results

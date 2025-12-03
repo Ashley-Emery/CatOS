@@ -122,7 +122,7 @@ public class TrashManager {
     }
 
     public void deletePermanent(File f) throws IOException {
-        // eliminar del índice si está
+        
         Map<String, String> index = loadIndex();
         if (index.containsKey(f.getName())) {
             index.remove(f.getName());

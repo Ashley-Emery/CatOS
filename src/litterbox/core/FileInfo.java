@@ -66,10 +66,11 @@ public class FileInfo {
     }
 
     public String getFormattedSize() {
+        
         if (file.isDirectory()) {
-            // aquí podrías poner "X items", por simplicidad lo omitimos
             return "";
         }
+        
         long bytes = size;
         if (bytes < 1024) return bytes + " B";
         double kb = bytes / 1024.0;

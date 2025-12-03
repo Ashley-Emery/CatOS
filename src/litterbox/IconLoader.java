@@ -26,6 +26,7 @@ public class IconLoader {
     public static ImageIcon load(String name, int width, int height) {
         String path = "/litterbox/assets/" + name;
         URL url = IconLoader.class.getResource(path);
+        
         if (url == null) {
             System.err.println("No se encontró el recurso: " + path);
             return null;

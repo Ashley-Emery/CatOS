@@ -13,7 +13,7 @@ import javax.swing.SwingUtilities;
 
 public class LitterBoxMain {
     public static void main(String[] args) {
-        // Opcional: look and feel
+        
         try {
             for (var info : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {

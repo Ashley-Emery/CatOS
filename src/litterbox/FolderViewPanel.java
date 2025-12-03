@@ -75,10 +75,15 @@ public class FolderViewPanel extends JPanel {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                
                 if (e.getClickCount() == 2 && table.getSelectedRow() != -1) {
                     FileInfo fi = tableModel.getFileInfoAt(table.getSelectedRow());
-                    if (fi == null) return;
+                    
+                    if (fi == null)
+                        return;
+                    
                     File f = fi.getFile();
+                    
                     if (f.isDirectory()) {
                         currentFolder = f;
                         refresh();
@@ -115,22 +120,7 @@ public class FolderViewPanel extends JPanel {
         panel.add(left, BorderLayout.WEST);
         
         comboLocation.addActionListener(comboListener);
-//
-//        comboLocation.addActionListener(e -> {
-//            String sel = (String) comboLocation.getSelectedItem();
-//            if (sel == null) return;
-//            if ("Home".equals(sel)) {
-//                frame.navigateToHomeFromUI();
-//            } else if ("Trash".equals(sel)) {
-//                frame.navigateToTrashFromUI();
-//            } else {
-//                File root = new File(frame.getPathUtils().getAdminRoot(), sel);
-//                if (root.exists()) {
-//                    frame.navigateToFolderFromUI(root, root);
-//                }
-//            }
-//        });
-
+        
         JPanel center = new JPanel();
         center.setOpaque(false);
 
@@ -138,7 +128,7 @@ public class FolderViewPanel extends JPanel {
         right.setOpaque(false);
         right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
         
-        btnSearch.setIcon(IconLoader.load("search_bar.png", 85)); // Tamaño de 80x30 o similar si conoces el radio. Usaré un tamaño grande y lo ajustaremos.
+        btnSearch.setIcon(IconLoader.load("search_bar.png", 85));
         btnUpload.setIcon(IconLoader.load("upload.png", 85)); 
         btnNewFolder.setIcon(IconLoader.load("new_folder.png", 85));
         btnMove.setIcon(IconLoader.load("move.png", 85));
@@ -364,19 +354,24 @@ public class FolderViewPanel extends JPanel {
     }
     
     private class LocationComboListener implements java.awt.event.ActionListener {
+        
         @Override
         public void actionPerformed(java.awt.event.ActionEvent e) {
             String sel = (String) comboLocation.getSelectedItem();
-            if (sel == null) return;
+            if (sel == null)
+                return;
+            
             if ("Home".equals(sel)) {
                 frame.navigateToHomeFromUI();
+                
             } else if ("Trash".equals(sel)) {
                 frame.navigateToTrashFromUI();
+                
             } else {
+                
                 File root = new File(frame.getPathUtils().getAdminRoot(), sel);
+                
                 if (root.exists()) {
-                    // Aquí navegamos a la carpeta raíz seleccionada en el dropdown,
-                    // usando el root dos veces es correcto para la navegación del dropdown.
                     frame.navigateToFolderFromUI(root, root);
                 }
             }

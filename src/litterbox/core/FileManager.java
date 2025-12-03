@@ -15,17 +15,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class FileManager {
-
+    
     private final PathUtils pathUtils;
     private SortMode sortMode = SortMode.NAME;
     private boolean sortAsc = true;
-
+    
     public FileManager(PathUtils pathUtils) {
         this.pathUtils = pathUtils;
     }
-
-    // ====== Sort control ======
-
+    
     public void toggleSort(SortMode mode) {
         if (mode == this.sortMode) {
             sortAsc = !sortAsc;
@@ -34,21 +32,25 @@ public class FileManager {
             sortAsc = true;
         }
     }
-
-    // ====== Listado de carpeta ======
-
+    
     public List<FileInfo> listFolder(File folder) {
+        
         File[] files = folder.listFiles();
-        if (files == null) return Collections.emptyList();
-
+        if (files == null)
+            return Collections.emptyList();
+        
         List<FileInfo> infos = new ArrayList<>();
+        
         for (File f : files) {
             infos.add(new FileInfo(f, classify(f)));
         }
-
+        
         Comparator<FileInfo> cmp = getComparator();
         infos.sort(cmp);
-        if (!sortAsc) Collections.reverse(infos);
+        
+        if (!sortAsc)
+            Collections.reverse(infos);
+        
         return infos;
     }
 
@@ -62,8 +64,11 @@ public class FileManager {
     }
 
     private FileType classify(File f) {
-        if (f.isDirectory()) return FileType.FOLDER;
+        if (f.isDirectory())
+            return FileType.FOLDER;
+        
         String ext = getExtension(f.getName()).toLowerCase();
+        
         return switch (ext) {
             case "png", "jpg", "jpeg" -> FileType.PICTURE;
             case "mp3" -> FileType.MUSIC;
@@ -74,7 +79,8 @@ public class FileManager {
 
     public String getExtension(String name) {
         int idx = name.lastIndexOf('.');
-        if (idx < 0) return "";
+        if (idx < 0)
+            return "";
         return name.substring(idx + 1);
     }
     
@@ -82,9 +88,7 @@ public class FileManager {
         if (f == null) return null;
         return new FileInfo(f, classify(f));
     }
-
-    // ====== Operaciones de FS ======
-
+    
     public void createFolder(File parent, String name) throws IOException {
         File dir = new File(parent, name);
         if (!pathUtils.isInsideAdmin(dir)) {
@@ -98,7 +102,7 @@ public class FileManager {
             throw new IOException("Folder already exists.");
         }
     }
-
+    
     public void move(File src, File destDir) throws IOException {
         if (!destDir.exists() || !destDir.isDirectory()) {
             throw new IOException("Destination folder does not exist.");
@@ -109,7 +113,7 @@ public class FileManager {
         Path target = destDir.toPath().resolve(src.getName());
         Files.move(src.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
     }
-
+    
     public void copy(File src, File destDir, String newName) throws IOException {
         if (!destDir.exists() || !destDir.isDirectory()) {
             throw new IOException("Destination folder does not exist.");
@@ -124,7 +128,7 @@ public class FileManager {
             Files.copy(src.toPath(), target, StandardCopyOption.REPLACE_EXISTING);
         }
     }
-
+    
     private void copyDirectory(Path source, Path target) throws IOException {
         Files.walk(source).forEach(path -> {
             try {
@@ -142,7 +146,7 @@ public class FileManager {
             }
         });
     }
-
+    
     public int countRecursive(File f) {
         if (!f.exists()) return 0;
         if (f.isFile()) return 1;
@@ -155,7 +159,7 @@ public class FileManager {
         }
         return count[0];
     }
-
+    
     public void deleteRecursive(File f) throws IOException {
         if (!f.exists()) return;
         Path path = f.toPath();
@@ -169,13 +173,11 @@ public class FileManager {
                     }
                 });
     }
-
-    // ====== Búsqueda ======
-
+    
     public List<FileInfo> searchInAdmin(String query) {
         return searchInFolderRecursive(pathUtils.getAdminRoot(), query);
     }
-
+    
     public List<FileInfo> searchInFolderRecursive(File folder, String query) {
         String q = query.toLowerCase();
         List<FileInfo> result = new ArrayList<>();
