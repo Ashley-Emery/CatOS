@@ -426,6 +426,10 @@ public class HomeViewPanel extends JPanel {
         if (children == null) return;
 
         for (File child : children) {
+            if (child.isDirectory() && "trash".equalsIgnoreCase(child.getName())) {
+                continue; 
+            }
+
             DefaultMutableTreeNode node = new DefaultMutableTreeNode(child);
             parent.add(node);
             if (child.isDirectory()) {
