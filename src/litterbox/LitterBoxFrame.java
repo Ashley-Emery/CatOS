@@ -53,7 +53,7 @@ public class LitterBoxFrame extends JFrame {
 
         setContentPane(cardsPanel);
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(1200, 700);
         setLocationRelativeTo(null);
 
