@@ -26,7 +26,7 @@ public class FolderViewPanel extends JPanel {
     private final JButton btnBack = new JButton();
     private final JButton btnForward = new JButton();
     private final JComboBox<String> comboLocation = new JComboBox<>();
-    private final JButton btnSearchBar = new JButton();
+    private final JButton btnSearch = new JButton();
     private final JButton btnUpload = new JButton("Upload");
     private final JButton btnNewFolder = new JButton("New Folder");
     private final JButton btnMove = new JButton("Move");
@@ -96,17 +96,21 @@ public class FolderViewPanel extends JPanel {
 
         JPanel left = new JPanel();
         left.setOpaque(false);
+        
         btnBack.setIcon(IconLoader.load("backward_button.png", 24));
         btnForward.setIcon(IconLoader.load("forward_button.png", 24));
-        btnBack.addActionListener(e -> frame.goBack());
-        btnForward.addActionListener(e -> frame.goForward());
-        left.add(btnBack);
-        left.add(btnForward);
-        left.add(comboLocation);
-        panel.add(left, BorderLayout.WEST);
         
         makeIconOnlyButton(btnBack);
         makeIconOnlyButton(btnForward);
+        
+        btnBack.addActionListener(e -> frame.goBack());
+        btnForward.addActionListener(e -> frame.goForward());
+        
+        left.add(btnBack);
+        left.add(btnForward);
+        left.add(comboLocation);
+        
+        panel.add(left, BorderLayout.WEST);
 
         comboLocation.addActionListener(e -> {
             String sel = (String) comboLocation.getSelectedItem();
@@ -125,36 +129,37 @@ public class FolderViewPanel extends JPanel {
 
         JPanel center = new JPanel();
         center.setOpaque(false);
-        btnSearchBar.setIcon(IconLoader.load("search_bar.png", 150, 40));
-        btnSearchBar.setBorderPainted(false);
-        btnSearchBar.setContentAreaFilled(false);
-        btnSearchBar.addActionListener(e -> doSearch());
-        center.add(btnSearchBar);
-        panel.add(center, BorderLayout.CENTER);
 
         JPanel right = new JPanel();
         right.setOpaque(false);
         right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-        btnUpload.setIcon(IconLoader.load("upload.png"));
-        btnNewFolder.setIcon(IconLoader.load("new_folder.png"));
-        btnMove.setIcon(IconLoader.load("move.png"));
-        btnCopy.setIcon(IconLoader.load("copy.png"));
-        btnDelete.setIcon(IconLoader.load("delete.png"));
+        
+        btnSearch.setIcon(IconLoader.load("search_bar.png", 85)); // Tamaño de 80x30 o similar si conoces el radio. Usaré un tamaño grande y lo ajustaremos.
+        btnUpload.setIcon(IconLoader.load("upload.png", 85)); 
+        btnNewFolder.setIcon(IconLoader.load("new_folder.png", 85));
+        btnMove.setIcon(IconLoader.load("move.png", 85));
+        btnCopy.setIcon(IconLoader.load("copy.png", 85));
+        btnDelete.setIcon(IconLoader.load("delete.png", 85));
+        
+        setActionButtonStyle(btnSearch, "search_bar.png");
+        btnSearch.addActionListener(e -> doSearch());
         
         setActionButtonStyle(btnUpload, "upload.png");
-        setActionButtonStyle(btnNewFolder, "new_folder.png");
-        setActionButtonStyle(btnMove, "move.png");
-        setActionButtonStyle(btnCopy, "copy.png");
-        setActionButtonStyle(btnDelete, "delete.png");
-        
-        btnSearchBar.setIcon(IconLoader.load("search_bar.png", 150, 40));
-
         btnUpload.addActionListener(e -> doUpload());
+        
+        setActionButtonStyle(btnNewFolder, "new_folder.png");
         btnNewFolder.addActionListener(e -> doNewFolder());
+        
+        setActionButtonStyle(btnMove, "move.png");
         btnMove.addActionListener(e -> doMove());
+        
+        setActionButtonStyle(btnCopy, "copy.png");
         btnCopy.addActionListener(e -> doCopy());
+        
+        setActionButtonStyle(btnDelete, "delete.png");
         btnDelete.addActionListener(e -> doDeleteSoft());
 
+        right.add(btnSearch);
         right.add(btnUpload);
         right.add(btnNewFolder);
         right.add(btnMove);

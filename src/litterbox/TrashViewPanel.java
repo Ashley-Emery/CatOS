@@ -26,7 +26,7 @@ public class TrashViewPanel extends JPanel {
     private final JButton btnBack = new JButton();
     private final JButton btnForward = new JButton();
     private final JComboBox<String> comboLocation = new JComboBox<>();
-    private final JButton btnSearchBar = new JButton();
+    private final JButton btnSearch = new JButton();
     private final JButton btnRestore = new JButton("Restore");
     private final JButton btnDeletePermanent = new JButton("Delete");
     private final JLabel lblTrashIcon = new JLabel();
@@ -74,13 +74,20 @@ public class TrashViewPanel extends JPanel {
 
         JPanel left = new JPanel();
         left.setOpaque(false);
-        btnBack.setIcon(IconLoader.load("backward_button.png"));
-        btnForward.setIcon(IconLoader.load("forward_button.png"));
+        
+        btnBack.setIcon(IconLoader.load("backward_button.png", 24));
+        btnForward.setIcon(IconLoader.load("forward_button.png", 24));
+        
+        makeIconOnlyButton(btnBack);
+        makeIconOnlyButton(btnForward);
+        
         btnBack.addActionListener(e -> frame.goBack());
         btnForward.addActionListener(e -> frame.goForward());
+        
         left.add(btnBack);
         left.add(btnForward);
         left.add(comboLocation);
+        
         panel.add(left, BorderLayout.WEST);
 
         comboLocation.addItem("Home");
@@ -94,26 +101,30 @@ public class TrashViewPanel extends JPanel {
                 // ya estamos
             } else {
                 File root = new File(frame.getPathUtils().getAdminRoot(), sel);
-                if (root.exists()) frame.navigateToFolderFromUI(root, root);
+                if (root.exists()) 
+                    frame.navigateToFolderFromUI(root, root);
             }
         });
 
         JPanel center = new JPanel();
         center.setOpaque(false);
-        btnSearchBar.setIcon(IconLoader.load("search_bar.png"));
-        btnSearchBar.setBorderPainted(false);
-        btnSearchBar.setContentAreaFilled(false);
-        btnSearchBar.addActionListener(e -> doSearch());
-        center.add(btnSearchBar);
-        panel.add(center, BorderLayout.CENTER);
-
+        
         JPanel right = new JPanel();
         right.setOpaque(false);
-        btnRestore.setIcon(IconLoader.load("restore.png"));
-        btnDeletePermanent.setIcon(IconLoader.load("delete.png"));
-        lblTrashIcon.setIcon(IconLoader.load("trash.png"));
-
+        right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
+        
+        btnSearch.setIcon(IconLoader.load("search_bar.png", 85));
+        btnRestore.setIcon(IconLoader.load("restore.png", 85));
+        btnDeletePermanent.setIcon(IconLoader.load("delete.png", 85));
+        lblTrashIcon.setIcon(IconLoader.load("trash.png", 55));
+        
+        setActionButtonStyle(btnSearch, "search_bar.png");
+        btnSearch.addActionListener(e -> doSearch());
+        
+        setActionButtonStyle(btnRestore, "restore.png");
         btnRestore.addActionListener(e -> doRestore());
+        
+       setActionButtonStyle(btnDeletePermanent, "delete.png"); 
         btnDeletePermanent.addActionListener(e -> doDeletePermanent());
 
         right.add(btnRestore);
@@ -209,4 +220,33 @@ public class TrashViewPanel extends JPanel {
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+    
+    private void setActionButtonStyle(JButton button, String iconName) {
+        final int BTN_WIDTH = 100;
+        final int BTN_HEIGHT = 50;
+
+        Icon scaledIcon = IconLoader.load(iconName, BTN_WIDTH, BTN_HEIGHT); 
+        button.setIcon(scaledIcon);
+
+        button.setText(null); 
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.setPreferredSize(new Dimension(BTN_WIDTH, BTN_HEIGHT));
+    }
+    
+    private void makeIconOnlyButton(JButton button) {
+        button.setText(null); 
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setPreferredSize(new Dimension(30, 30));
+    }
+    
+    public void updateHistoryButtons() {
+        btnBack.setEnabled(frame.getHistoryManager().canGoBack());
+        btnForward.setEnabled(frame.getHistoryManager().canGoForward());
+    }
+    
 }
