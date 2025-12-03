@@ -35,6 +35,8 @@ public class FolderViewPanel extends JPanel {
 
     private final JTable table;
     private final FileTableModel tableModel = new FileTableModel();
+    
+    private final LocationComboListener comboListener = new LocationComboListener();
 
     private File currentFolder;
     private File rootLogical;
@@ -111,21 +113,23 @@ public class FolderViewPanel extends JPanel {
         left.add(comboLocation);
         
         panel.add(left, BorderLayout.WEST);
-
-        comboLocation.addActionListener(e -> {
-            String sel = (String) comboLocation.getSelectedItem();
-            if (sel == null) return;
-            if ("Home".equals(sel)) {
-                frame.navigateToHomeFromUI();
-            } else if ("Trash".equals(sel)) {
-                frame.navigateToTrashFromUI();
-            } else {
-                File root = new File(frame.getPathUtils().getAdminRoot(), sel);
-                if (root.exists()) {
-                    frame.navigateToFolderFromUI(root, root);
-                }
-            }
-        });
+        
+        comboLocation.addActionListener(comboListener);
+//
+//        comboLocation.addActionListener(e -> {
+//            String sel = (String) comboLocation.getSelectedItem();
+//            if (sel == null) return;
+//            if ("Home".equals(sel)) {
+//                frame.navigateToHomeFromUI();
+//            } else if ("Trash".equals(sel)) {
+//                frame.navigateToTrashFromUI();
+//            } else {
+//                File root = new File(frame.getPathUtils().getAdminRoot(), sel);
+//                if (root.exists()) {
+//                    frame.navigateToFolderFromUI(root, root);
+//                }
+//            }
+//        });
 
         JPanel center = new JPanel();
         center.setOpaque(false);
@@ -173,7 +177,11 @@ public class FolderViewPanel extends JPanel {
     public void setFolder(File folder, File rootForDropdown) {
         this.currentFolder = folder;
         this.rootLogical = rootForDropdown;
+        
+        comboLocation.removeActionListener(comboListener); 
         refreshDropdown();
+        comboLocation.addActionListener(comboListener);
+
         refresh();
     }
 
@@ -353,6 +361,26 @@ public class FolderViewPanel extends JPanel {
     public void updateHistoryButtons() {
         btnBack.setEnabled(frame.getHistoryManager().canGoBack());
         btnForward.setEnabled(frame.getHistoryManager().canGoForward());
+    }
+    
+    private class LocationComboListener implements java.awt.event.ActionListener {
+        @Override
+        public void actionPerformed(java.awt.event.ActionEvent e) {
+            String sel = (String) comboLocation.getSelectedItem();
+            if (sel == null) return;
+            if ("Home".equals(sel)) {
+                frame.navigateToHomeFromUI();
+            } else if ("Trash".equals(sel)) {
+                frame.navigateToTrashFromUI();
+            } else {
+                File root = new File(frame.getPathUtils().getAdminRoot(), sel);
+                if (root.exists()) {
+                    // Aquí navegamos a la carpeta raíz seleccionada en el dropdown,
+                    // usando el root dos veces es correcto para la navegación del dropdown.
+                    frame.navigateToFolderFromUI(root, root);
+                }
+            }
+        }
     }
     
 }
