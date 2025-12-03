@@ -10,6 +10,9 @@ package desktop;
  * @author ashley
  */
 
+import felx.FelxWindow;
+import litterbox.LitterBoxFrame;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
@@ -80,7 +83,19 @@ public class DesktopMenuCard extends JPanel {
         panel.setLayout(new BorderLayout());
 
         JButton button = createIconButton(resourcePath, GRID_ICON_SIZE);
-        button.addActionListener(e -> showNotImplemented(appName));
+        
+        button.addActionListener(e -> {
+            switch (appName) {
+                case "Litter Box" -> {openAppWindow(new LitterBoxFrame());}
+                case "FEL.X" -> {openAppWindow(new FelxWindow());}
+                case "Scribble" -> showNotImplemented("Scribble");
+                case "iTuna" -> showNotImplemented("iTuna");
+                case "Photos" -> showNotImplemented("Photos");
+                case "Lynxstagram" -> showNotImplemented("Lynxstagram");
+                default -> showNotImplemented(appName);
+            }
+        });
+
         panel.add(button, BorderLayout.CENTER);
 
         return panel;
@@ -101,6 +116,18 @@ public class DesktopMenuCard extends JPanel {
         
         return button;
         
+    }
+    
+    private void openAppWindow(java.awt.Window appWindow) {
+        
+        if (appWindow == null) {
+            return;
+        }
+        
+        if (owner != null && owner.getAppManager() != null) {
+            owner.getAppManager().registerApp(appWindow);
+        }
+        appWindow.setVisible(true);
     }
     
     private void showNotImplemented(String appName) {

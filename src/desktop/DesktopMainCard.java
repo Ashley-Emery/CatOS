@@ -11,6 +11,7 @@ package desktop;
  */
 
 import felx.FelxWindow;
+import litterbox.LitterBoxFrame;
 
 import javax.swing.*;
 import java.awt.*;
@@ -93,7 +94,7 @@ public class DesktopMainCard extends JPanel {
         
         btnLynx.addActionListener(e -> showNotImplemented("Lynxstagram"));
         btnPhotos.addActionListener(e -> showNotImplemented("Photos"));
-        btnLitterbox.addActionListener(e -> showNotImplemented("Litter Box"));
+        btnLitterbox.addActionListener(e -> openAppWindow(new LitterBoxFrame()));
         btnScribble.addActionListener(e -> showNotImplemented("Scribble"));
         btnItuna.addActionListener(e -> showNotImplemented("iTuna"));
         btnFelx.addActionListener(e -> openAppWindow(new FelxWindow()));
