@@ -34,6 +34,7 @@ public class ScribbleFrame extends JFrame {
     private JComboBox<Integer> sizeCombo;
     private JButton colorButton;
     private JButton saveButton;
+    private JButton openButton;
 
     private JFileChooser fileChooser;
 
@@ -41,7 +42,7 @@ public class ScribbleFrame extends JFrame {
         this.editorCore = new ScribbleEditorCore();
 
         setTitle("Scribble - Editor de texto");
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setSize(900, 600);
         setLocationRelativeTo(null);
 
@@ -70,7 +71,8 @@ public class ScribbleFrame extends JFrame {
 
     private void initComponents() {
         setLayout(new BorderLayout());
-        fileChooser = new JFileChooser(getDocumentsDirectory());
+        
+        fileChooser = new JFileChooser(getUserRootDirectory());
 
         createTextPane();
         createToolbar();
@@ -126,6 +128,12 @@ public class ScribbleFrame extends JFrame {
         colorButton = new JButton("Color");
         colorButton.addActionListener(this::chooseColor);
         toolBar.add(colorButton);
+        toolBar.addSeparator();
+        
+        openButton = new JButton("Abrir");
+        openButton.addActionListener(e -> openFile()); 
+        toolBar.add(openButton);
+        toolBar.addSeparator();
         
         saveButton = new JButton("Guardar");
         saveButton.addActionListener(e -> saveFile(false));
@@ -195,7 +203,7 @@ public class ScribbleFrame extends JFrame {
     
     private void openFile() {
         
-        fileChooser.setCurrentDirectory(getDocumentsDirectory()); 
+        fileChooser.setCurrentDirectory(getUserRootDirectory()); 
 
         int option = fileChooser.showOpenDialog(this);
         if (option == JFileChooser.APPROVE_OPTION) {
@@ -213,18 +221,43 @@ public class ScribbleFrame extends JFrame {
         }
     }
     
+    private File getUserRootDirectory() {
+        String loggedInUsername = "admin";
+        if (SessionManager.isLoggedIn() && SessionManager.getCurrentUser() != null) {
+            loggedInUsername = SessionManager.getCurrentUser().getUsername();
+        }
+        
+        String physicalZRoot = System.getProperty("user.dir") + File.separator + "Z:";
+        File userRoot = new File(physicalZRoot, loggedInUsername);
+
+        if (!userRoot.exists()) {
+            userRoot.mkdirs();
+        }
+
+        return userRoot;
+    }
+    
     private void saveFile(boolean saveAs) {
         File file = editorCore.getCurrentFile();
 
         if (file == null || saveAs) {
+            fileChooser.setCurrentDirectory(getUserRootDirectory());
+        
+        if (file == null) {
+            File defaultFile = new File(getUserRootDirectory(), "Nuevo Documento.txt");
+            fileChooser.setSelectedFile(defaultFile);
+        } else {
             
-            fileChooser.setCurrentDirectory(getDocumentsDirectory()); 
-
-            int option = fileChooser.showSaveDialog(this);
-            if (option != JFileChooser.APPROVE_OPTION) {
-                return;
-            }
-            file = fileChooser.getSelectedFile();
+            fileChooser.setSelectedFile(file);
+        }
+        
+        int option = fileChooser.showSaveDialog(this);
+        
+        if (option != JFileChooser.APPROVE_OPTION) {
+            return;
+        }
+        
+        file = fileChooser.getSelectedFile();
             
             String name = file.getName().toLowerCase();
             if (!name.endsWith(".txt")) {
