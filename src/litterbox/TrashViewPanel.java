@@ -100,7 +100,7 @@ public class TrashViewPanel extends JPanel {
             } else if ("Trash".equals(sel)) {
                 // ya estamos
             } else {
-                File root = new File(frame.getPathUtils().getAdminRoot(), sel);
+                File root = new File(frame.getPathUtils().getUserRoot(), sel);
                 if (root.exists()) 
                     frame.navigateToFolderFromUI(root, root);
             }
@@ -145,7 +145,7 @@ public class TrashViewPanel extends JPanel {
     private void refreshDropdown() {
         comboLocation.removeAllItems();
         comboLocation.addItem("Home");
-        File admin = frame.getPathUtils().getAdminRoot();
+        File admin = frame.getPathUtils().getUserRoot();
         File[] children = admin.listFiles();
         if (children != null) {
             for (File child : children) {

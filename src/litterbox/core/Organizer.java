@@ -40,11 +40,11 @@ public class Organizer {
             String ext = fileManager.getExtension(f.getName()).toLowerCase();
             File targetDir;
             if ("mp3".equals(ext)) {
-                targetDir = new File(pathUtils.getAdminRoot(), "Music");
+                targetDir = new File(pathUtils.getUserRoot(), "Music");
             } else if ("png".equals(ext) || "jpg".equals(ext) || "jpeg".equals(ext)) {
-                targetDir = new File(pathUtils.getAdminRoot(), "Pictures");
+                targetDir = new File(pathUtils.getUserRoot(), "Pictures");
             } else {
-                targetDir = new File(pathUtils.getAdminRoot(), "Documents");
+                targetDir = new File(pathUtils.getUserRoot(), "Documents");
             }
 
             if (!targetDir.exists()) {

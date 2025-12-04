@@ -179,7 +179,7 @@ public class FolderViewPanel extends JPanel {
         comboLocation.removeAllItems();
         comboLocation.addItem("Home");
 
-        File admin = frame.getPathUtils().getAdminRoot();
+        File admin = frame.getPathUtils().getUserRoot();
         File[] children = admin.listFiles();
         if (children != null) {
             for (File child : children) {
@@ -369,7 +369,7 @@ public class FolderViewPanel extends JPanel {
                 
             } else {
                 
-                File root = new File(frame.getPathUtils().getAdminRoot(), sel);
+                File root = new File(frame.getPathUtils().getUserRoot(), sel);
                 
                 if (root.exists()) {
                     frame.navigateToFolderFromUI(root, root);

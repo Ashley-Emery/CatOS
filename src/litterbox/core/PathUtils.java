@@ -13,17 +13,20 @@ import java.io.File;
 
 public class PathUtils {
 
-    private final File adminRoot;
+    private final File userRoot;
     private final File uploadsDir;
 
-    public PathUtils() {
+    public PathUtils(String username) {
         
-        this.adminRoot = new File("/home/ashley/NetBeansProjects/CatOS/Z:/admin");
-        this.uploadsDir = new File("/home/ashley/NetBeansProjects/CatOS/Uploads");
+        String userDir = System.getProperty("user.dir");
+        String physicalZRoot = userDir + File.separator + "Z:";
+
+        this.userRoot = new File(physicalZRoot, username); 
+        this.uploadsDir = new File(userDir, "Uploads");
     }
 
-    public File getAdminRoot() {
-        return adminRoot;
+    public File getUserRoot() {
+        return userRoot;
     }
 
     public File getUploadsDir() {
@@ -31,25 +34,25 @@ public class PathUtils {
     }
 
     public File getTrashDir() {
-        return new File(adminRoot, "Trash");
+        return new File(userRoot, "Trash"); 
     }
 
-    public boolean isInsideAdmin(File f) {
+    public boolean isInsideUserRoot(File f) {
         try {
-            String rootPath = adminRoot.getCanonicalPath();
+            String rootPath = userRoot.getCanonicalPath(); 
             String filePath = f.getCanonicalPath();
             return filePath.startsWith(rootPath);
         } catch (Exception ex) {
             return false;
         }
     }
-
+    
     public File findRootLogicalFor(File f) {
         
         File parent = f;
-        File rootCandidate = adminRoot;
+        File rootCandidate = userRoot;
         try {
-            String rootPath = adminRoot.getCanonicalPath();
+            String rootPath = userRoot.getCanonicalPath();
             while (parent != null) {
                 File up = parent.getParentFile();
                 if (up == null) break;

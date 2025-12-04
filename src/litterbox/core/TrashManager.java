@@ -23,7 +23,7 @@ public class TrashManager {
     public TrashManager(PathUtils pathUtils) {
         this.pathUtils = pathUtils;
         this.fileManager = new FileManager(pathUtils);
-        this.indexFile = new File(pathUtils.getAdminRoot(), ".trashindex.txt");
+        this.indexFile = new File(pathUtils.getUserRoot(), ".trashindex.txt");
     }
 
     public void moveToTrash(File src) throws IOException {
@@ -32,7 +32,7 @@ public class TrashManager {
             trashDir.mkdirs();
         }
 
-        if (!pathUtils.isInsideAdmin(src)) {
+        if (!pathUtils.isInsideUserRoot(src)) {
             throw new IOException("Only items inside admin can be trashed.");
         }
 

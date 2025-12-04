@@ -10,6 +10,7 @@ package litterbox;
  */
 
 import litterbox.core.*;
+import admin.core.SessionManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -36,8 +37,15 @@ public class LitterBoxFrame extends JFrame {
 
     public LitterBoxFrame() {
         super("Litter Box");
-
-        pathUtils = new PathUtils();
+        
+        String loggedInUsername = "admin";
+        
+        if (SessionManager.isLoggedIn() && SessionManager.getCurrentUser() != null) {
+            loggedInUsername = SessionManager.getCurrentUser().getUsername();
+        }
+        
+        pathUtils = new PathUtils(loggedInUsername);
+        
         fileManager = new FileManager(pathUtils);
         trashManager = new TrashManager(pathUtils);
         organizer = new Organizer(pathUtils, fileManager, trashManager);
@@ -60,7 +68,7 @@ public class LitterBoxFrame extends JFrame {
         showHome();
 
         historyManager.clear();
-        historyManager.pushLocation(new HistoryLocation(HistoryLocation.Type.HOME, null, pathUtils.getAdminRoot()));
+        historyManager.pushLocation(new HistoryLocation(HistoryLocation.Type.HOME, null, pathUtils.getUserRoot()));
     }
 
     public PathUtils getPathUtils() {
@@ -99,7 +107,7 @@ public class LitterBoxFrame extends JFrame {
     }
 
     public void navigateToHomeFromUI() {
-        historyManager.pushLocation(new HistoryLocation(HistoryLocation.Type.HOME, null, pathUtils.getAdminRoot()));
+        historyManager.pushLocation(new HistoryLocation(HistoryLocation.Type.HOME, null, pathUtils.getUserRoot()));
         showHome();
     }
 

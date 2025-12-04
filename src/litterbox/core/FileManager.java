@@ -91,7 +91,7 @@ public class FileManager {
     
     public void createFolder(File parent, String name) throws IOException {
         File dir = new File(parent, name);
-        if (!pathUtils.isInsideAdmin(dir)) {
+        if (!pathUtils.isInsideUserRoot(dir)) {
             throw new IOException("Destination must be inside admin root.");
         }
         if (!dir.exists()) {
@@ -107,7 +107,7 @@ public class FileManager {
         if (!destDir.exists() || !destDir.isDirectory()) {
             throw new IOException("Destination folder does not exist.");
         }
-        if (!pathUtils.isInsideAdmin(destDir)) {
+        if (!pathUtils.isInsideUserRoot(destDir)) {
             throw new IOException("Destination must be inside admin root.");
         }
         Path target = destDir.toPath().resolve(src.getName());
@@ -118,7 +118,7 @@ public class FileManager {
         if (!destDir.exists() || !destDir.isDirectory()) {
             throw new IOException("Destination folder does not exist.");
         }
-        if (!pathUtils.isInsideAdmin(destDir)) {
+        if (!pathUtils.isInsideUserRoot(destDir)) {
             throw new IOException("Destination must be inside admin root.");
         }
         Path target = destDir.toPath().resolve(newName);
@@ -175,7 +175,7 @@ public class FileManager {
     }
     
     public List<FileInfo> searchInAdmin(String query) {
-        return searchInFolderRecursive(pathUtils.getAdminRoot(), query);
+        return searchInFolderRecursive(pathUtils.getUserRoot(), query);
     }
     
     public List<FileInfo> searchInFolderRecursive(File folder, String query) {

@@ -51,8 +51,10 @@ public class HomeViewPanel extends JPanel {
 
         JPanel top = buildTopBar();
         add(top, BorderLayout.NORTH);
+        
+        String username = getRootNodeName();
 
-        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode("admin");
+        DefaultMutableTreeNode rootNode = new DefaultMutableTreeNode(username);
         treeModel = new DefaultTreeModel(rootNode);
         tree = new JTree(treeModel);
         tree.setRootVisible(true);
@@ -73,8 +75,8 @@ public class HomeViewPanel extends JPanel {
                     Object userObj = node.getUserObject();
                     if (userObj instanceof File file) {
                         currentFolder = file.isDirectory() ? file : file.getParentFile();
-                    } else if ("admin".equals(userObj)) {
-                        currentFolder = frame.getPathUtils().getAdminRoot();
+                    } else if (username.equals(userObj)) {
+                        currentFolder = frame.getPathUtils().getUserRoot();
                     }
                 }
             }
@@ -106,7 +108,12 @@ public class HomeViewPanel extends JPanel {
 
         add(treeScroll, BorderLayout.CENTER);
 
-        currentFolder = frame.getPathUtils().getAdminRoot();
+        currentFolder = frame.getPathUtils().getUserRoot();
+    }
+    
+    private String getRootNodeName() {
+        File root = frame.getPathUtils().getUserRoot();
+        return root.getName(); 
     }
 
     private JPanel buildTopBar() {
@@ -141,7 +148,7 @@ public class HomeViewPanel extends JPanel {
             } else if ("Trash".equals(sel)) {
                 frame.navigateToTrashFromUI();
             } else {
-                File root = new File(frame.getPathUtils().getAdminRoot(), sel);
+                File root = new File(frame.getPathUtils().getUserRoot(), sel);
                 if (root.exists() && root.isDirectory()) {
                     frame.navigateToFolderFromUI(root, root);
                 }
@@ -289,7 +296,7 @@ public class HomeViewPanel extends JPanel {
         File targetFolder = currentFolder;
         
         if (targetFolder == null) {
-             targetFolder = frame.getPathUtils().getAdminRoot();
+             targetFolder = frame.getPathUtils().getUserRoot();
         }
 
         String name = JOptionPane.showInputDialog(this, "New folder name (in " + targetFolder.getName() + "):", "New Folder",
@@ -409,8 +416,9 @@ public class HomeViewPanel extends JPanel {
     }
 
     public void refreshTree() {
-        DefaultMutableTreeNode root = new DefaultMutableTreeNode("admin");
-        File adminRoot = frame.getPathUtils().getAdminRoot();
+        String username = getRootNodeName();
+        DefaultMutableTreeNode root = new DefaultMutableTreeNode(username);
+        File adminRoot = frame.getPathUtils().getUserRoot();
         buildTree(adminRoot, root);
         treeModel.setRoot(root);
         treeModel.reload();
@@ -437,7 +445,7 @@ public class HomeViewPanel extends JPanel {
         comboLocation.removeAllItems();
         comboLocation.addItem("Home");
 
-        File admin = frame.getPathUtils().getAdminRoot();
+        File admin = frame.getPathUtils().getUserRoot();
         File[] children = admin.listFiles();
         if (children != null) {
             for (File child : children) {
