@@ -12,6 +12,7 @@ package desktop;
 
 import felx.FelxWindow;
 import litterbox.LitterBoxFrame;
+import scribble.ScribbleFrame;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -88,7 +89,7 @@ public class DesktopMenuCard extends JPanel {
             switch (appName) {
                 case "Litter Box" -> {openAppWindow(new LitterBoxFrame());}
                 case "FEL.X" -> {openAppWindow(new FelxWindow());}
-                case "Scribble" -> showNotImplemented("Scribble");
+                case "Scribble"   -> openAppWindow(new ScribbleFrame());
                 case "iTuna" -> showNotImplemented("iTuna");
                 case "Photos" -> showNotImplemented("Photos");
                 case "Lynxstagram" -> showNotImplemented("Lynxstagram");
