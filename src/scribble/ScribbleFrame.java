@@ -8,9 +8,11 @@ package scribble;
  *
  * @author ashley
  */
+
 import admin.core.SessionManager; 
 import admin.core.FileSystemManager;
 import scribble.core.ScribbleEditorCore;
+import admin.core.User;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -23,12 +25,12 @@ import java.io.IOException;
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
+import javax.swing.filechooser.FileSystemView; 
 
 public class ScribbleFrame extends JFrame {
 
     private final ScribbleEditorCore editorCore;
-
-    // GUI
+    
     private JTextPane textPane;
     private JComboBox<String> fontCombo;
     private JComboBox<Integer> sizeCombo;
@@ -68,11 +70,33 @@ public class ScribbleFrame extends JFrame {
 
         return documentsDir;
     }
-
+    
     private void initComponents() {
         setLayout(new BorderLayout());
+
+        File documentsDir = getDocumentsDirectory();
+        File userRoot = getUserRootDirectory();
+
+        String loggedInUsername = "admin";
+        User currentUser = null;
+        if (SessionManager.isLoggedIn()) {
+            currentUser = SessionManager.getCurrentUser();
+            loggedInUsername = currentUser.getUsername();
+        }
         
-        fileChooser = new JFileChooser(getUserRootDirectory());
+        FileSystemView view;
+        File initialDir;
+        
+        if ("admin".equals(loggedInUsername)) {
+            String physicalZBase = System.getProperty("user.dir") + File.separator + "Z:";
+            initialDir = new File(physicalZBase);
+            view = FileSystemView.getFileSystemView();
+        } else {
+            view = new RestrictedFileSystemView(userRoot, documentsDir);
+            initialDir = documentsDir;
+        }
+        
+        fileChooser = new JFileChooser(initialDir, view); 
 
         createTextPane();
         createToolbar();
@@ -102,7 +126,7 @@ public class ScribbleFrame extends JFrame {
         String[] fonts = ge.getAvailableFontFamilyNames();
         
         fontCombo = new JComboBox<>(fonts);
-        fontCombo.setPreferredSize(new Dimension(200, 25));
+        fontCombo.setPreferredSize(new Dimension(200, 40));
         fontCombo.setSelectedItem(textPane.getFont().getFamily());
         fontCombo.addActionListener(e -> {
             editorCore.setCurrentFont((String) fontCombo.getSelectedItem());
@@ -115,7 +139,7 @@ public class ScribbleFrame extends JFrame {
         
         Integer[] sizes = { 8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 42, 48, 64 };
         sizeCombo = new JComboBox<>(sizes);
-        sizeCombo.setPreferredSize(new Dimension(80, 25));
+        sizeCombo.setPreferredSize(new Dimension(80, 40));
         sizeCombo.setSelectedItem(textPane.getFont().getSize());
         sizeCombo.addActionListener(e -> {
             editorCore.setCurrentSize((Integer) sizeCombo.getSelectedItem());
@@ -125,21 +149,42 @@ public class ScribbleFrame extends JFrame {
         toolBar.add(sizeCombo);
         toolBar.addSeparator();
         
-        colorButton = new JButton("Color");
+        final int ICON_SIZE = 55;
+        
+        colorButton = new JButton();
+        colorButton.setIcon(IconLoader.load("color.png", ICON_SIZE, ICON_SIZE));
+        colorButton.setToolTipText("Color de texto");
         colorButton.addActionListener(this::chooseColor);
         toolBar.add(colorButton);
         toolBar.addSeparator();
         
-        openButton = new JButton("Abrir");
+        openButton = new JButton();
+        openButton.setIcon(IconLoader.load("open.png", ICON_SIZE, ICON_SIZE));
+        openButton.setToolTipText("Abrir archivo");
         openButton.addActionListener(e -> openFile()); 
         toolBar.add(openButton);
         toolBar.addSeparator();
         
-        saveButton = new JButton("Guardar");
+        saveButton = new JButton();
+        saveButton.setIcon(IconLoader.load("save.png", ICON_SIZE, ICON_SIZE));
+        saveButton.setToolTipText("Guardar");
         saveButton.addActionListener(e -> saveFile(false));
         toolBar.add(saveButton);
         
+        makeIconOnlyButton(colorButton, ICON_SIZE);
+        makeIconOnlyButton(openButton, ICON_SIZE);
+        makeIconOnlyButton(saveButton, ICON_SIZE);
+        
         add(toolBar, BorderLayout.NORTH);
+    }
+    
+    private void makeIconOnlyButton(JButton button, int size) {
+        button.setText(null); 
+        button.setBorderPainted(false);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        
+        button.setPreferredSize(new Dimension(size + 6, size)); 
     }
     
     private void chooseColor(ActionEvent e) {
@@ -244,7 +289,7 @@ public class ScribbleFrame extends JFrame {
             fileChooser.setCurrentDirectory(getUserRootDirectory());
         
         if (file == null) {
-            File defaultFile = new File(getUserRootDirectory(), "Nuevo Documento.txt");
+            File defaultFile = new File(getUserRootDirectory(), "Nuevo Documento.cat");
             fileChooser.setSelectedFile(defaultFile);
         } else {
             
@@ -260,8 +305,8 @@ public class ScribbleFrame extends JFrame {
         file = fileChooser.getSelectedFile();
             
             String name = file.getName().toLowerCase();
-            if (!name.endsWith(".txt")) {
-                file = new File(file.getAbsolutePath() + ".txt");
+            if (!name.endsWith(".cat")) {
+                file = new File(file.getAbsolutePath() + ".cat");
             }
         }
 

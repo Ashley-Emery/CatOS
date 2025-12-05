@@ -37,7 +37,7 @@ public class ScribbleEditorCore {
         
         this.currentFont = "Serif";
         this.currentSize = 14;
-        this.currentColor = Color.BLACK;
+        this.currentColor = Color.WHITE;
     }
     
     public void newDocument() {
