@@ -52,45 +52,47 @@ public class ScribbleFrame extends JFrame {
     }
     
     private File getDocumentsDirectory() {
-        String loggedInUsername = "admin";
-        if (SessionManager.isLoggedIn() && SessionManager.getCurrentUser() != null) {
-            loggedInUsername = SessionManager.getCurrentUser().getUsername();
-        }
-
-        String logicalUserRoot = FileSystemManager.getUserRoot(loggedInUsername);
-
-        String physicalZRoot = System.getProperty("user.dir") + File.separator + "Z:";
-
-        File userRoot = new File(physicalZRoot, loggedInUsername);
+        
+        File userRoot = getUserRootDirectory();
         File documentsDir = new File(userRoot, "Documents");
-
+        
         if (!documentsDir.exists()) {
             documentsDir.mkdirs();
         }
-
+        
         return documentsDir;
+    }
+    
+    private File getPhysicalZRootDirectory() {
+        
+        String physicalZRootPath = System.getProperty("user.dir") + File.separator + "Z:";
+        File physicalZRoot = new File(physicalZRootPath);
+        
+        if (!physicalZRoot.exists()) {
+            physicalZRoot.mkdirs();
+        }
+        return physicalZRoot;
     }
     
     private void initComponents() {
         setLayout(new BorderLayout());
-
+        
+        String loggedInUsername = "admin";
+        if (SessionManager.isLoggedIn() && SessionManager.getCurrentUser() != null) {
+            loggedInUsername = SessionManager.getCurrentUser().getUsername();
+        }
+        
         File documentsDir = getDocumentsDirectory();
         File userRoot = getUserRootDirectory();
-
-        String loggedInUsername = "admin";
-        User currentUser = null;
-        if (SessionManager.isLoggedIn()) {
-            currentUser = SessionManager.getCurrentUser();
-            loggedInUsername = currentUser.getUsername();
-        }
         
         FileSystemView view;
         File initialDir;
         
         if ("admin".equals(loggedInUsername)) {
-            String physicalZBase = System.getProperty("user.dir") + File.separator + "Z:";
-            initialDir = new File(physicalZBase);
-            view = FileSystemView.getFileSystemView();
+            File physicalZRoot = getPhysicalZRootDirectory(); 
+            view = new RestrictedFileSystemView(physicalZRoot, userRoot); 
+            initialDir = userRoot;
+
         } else {
             view = new RestrictedFileSystemView(userRoot, documentsDir);
             initialDir = documentsDir;
@@ -272,7 +274,7 @@ public class ScribbleFrame extends JFrame {
             loggedInUsername = SessionManager.getCurrentUser().getUsername();
         }
         
-        String physicalZRoot = System.getProperty("user.dir") + File.separator + "Z:";
+        File physicalZRoot = getPhysicalZRootDirectory(); 
         File userRoot = new File(physicalZRoot, loggedInUsername);
 
         if (!userRoot.exists()) {

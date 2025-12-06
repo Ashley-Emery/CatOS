@@ -62,6 +62,41 @@ public class RestrictedFileSystemView extends FileSystemView {
         if (dir.equals(userRoot)) {
             return null;
         }
-        return super.getParentDirectory(dir);
+        
+        File parent = dir.getParentFile();
+        
+        if (parent != null && isParent(userRoot, parent)) {
+            return parent;
+        }
+        
+        if (parent == null || !parent.canRead()) {
+            return null;
+        }
+        
+        if (parent.equals(userRoot)) {
+            return userRoot;
+        }
+        
+        try {
+            if (!dir.getCanonicalPath().startsWith(userRoot.getCanonicalPath())) {
+                 return null;
+            }
+        } catch (IOException e) {
+            return null;
+        }
+        
+        if (dir.getParentFile() != null && dir.getParentFile().getAbsolutePath().startsWith(userRoot.getAbsolutePath())) {
+            return dir.getParentFile();
+        }
+        
+        return null;
     }
+    
+    @Override
+    public boolean isRoot(File dir) {
+        return dir.equals(userRoot);
+    }
+    
+    
+    
 }
