@@ -107,7 +107,6 @@ public class CatOSFileChooserDialog extends JDialog {
                 if (file.isDirectory()) {
                     directories.add(file);
                 } else {
-                    // Solo mostrar archivos .cat (o los que quieras)
                     if (file.getName().toLowerCase().endsWith(".cat")) {
                         documents.add(file);
                     }

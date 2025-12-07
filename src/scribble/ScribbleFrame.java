@@ -51,6 +51,23 @@ public class ScribbleFrame extends JFrame {
         initComponents();
     }
     
+    public ScribbleFrame(File fileToOpen) {
+        this();
+
+        if (fileToOpen != null && fileToOpen.isFile()) {
+            try {
+                editorCore.open(fileToOpen);
+                textPane.setDocument(editorCore.getDocument());
+                setTitle("Scribble - " + fileToOpen.getName());
+            } catch (IOException | BadLocationException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this,
+                        "Error al abrir el archivo desde Litter Box:\n" + ex.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
     private File getDocumentsDirectory() {
         
         File userRoot = getUserRootDirectory();

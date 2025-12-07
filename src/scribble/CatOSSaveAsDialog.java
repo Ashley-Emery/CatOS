@@ -214,22 +214,19 @@ public class CatOSSaveAsDialog extends JDialog {
             if (userObject instanceof File) {
                 File file = (File) userObject;
                 String path = file.getAbsolutePath();
-
-                // Si es el nodo raíz (Z:/), simplemente mostramos Z:/
+                
                 if (file.equals(zRoot)) {
-                    setText("Z:/"); // Z:/ siempre es la raíz visible para el admin, o el padre del usuario normal.
+                    setText("Z:/");
                 } 
-                // Si es el nodo inmediatamente debajo de Z:/ (e.g., Z:/admin o Z:/emery), 
-                // mostramos solo el nombre del usuario.
+                
                 else if (file.getParentFile().equals(zRoot)) {
                     setText(file.getName());
                 }
-                // Para todos los subdirectorios (e.g., Documents, Music), solo mostramos el nombre
+                
                 else {
                     setText(file.getName());
                 }
-
-                // Asignar iconos (opcional)
+                
                 if (file.isDirectory()) {
                      setIcon(UIManager.getIcon("FileView.directoryIcon"));
                 } else {

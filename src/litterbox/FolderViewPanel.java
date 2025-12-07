@@ -10,6 +10,7 @@ package litterbox;
  */
 
 import litterbox.core.*;
+import scribble.ScribbleFrame;
 
 import javax.swing.*;
 import javax.swing.table.JTableHeader;
@@ -88,7 +89,7 @@ public class FolderViewPanel extends JPanel {
                         currentFolder = f;
                         refresh();
                     } else {
-                        showNotImplementedDialog(f);
+                        openAssociatedApp(f);
                     }
                 }
             }
@@ -316,13 +317,12 @@ public class FolderViewPanel extends JPanel {
                     "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-    private void showNotImplementedDialog(File f) {
-        String ext = frame.getFileManager().getExtension(f.getName());
-        JOptionPane.showMessageDialog(this,
-                "La app para abrir archivos con extensión ." + ext + " no está implementada aún.",
-                "Not implemented",
-                JOptionPane.INFORMATION_MESSAGE);
+    
+    private void openAssociatedApp(File f) {
+        SwingUtilities.invokeLater(() -> {
+            ScribbleFrame editor = new ScribbleFrame(f);
+            editor.setVisible(true);
+        });
     }
     
     private void setActionButtonStyle(JButton button, String iconName) {
