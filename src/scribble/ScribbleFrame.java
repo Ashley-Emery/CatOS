@@ -249,12 +249,25 @@ public class ScribbleFrame extends JFrame {
     }
     
     private void openFile() {
-        
-        fileChooser.setCurrentDirectory(getUserRootDirectory()); 
 
-        int option = fileChooser.showOpenDialog(this);
-        if (option == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
+        String loggedInUsername = "admin";
+        if (SessionManager.isLoggedIn() && SessionManager.getCurrentUser() != null) {
+            loggedInUsername = SessionManager.getCurrentUser().getUsername();
+        }
+
+        File initialRoot;
+        if ("admin".equals(loggedInUsername)) {
+            initialRoot = getPhysicalZRootDirectory();
+        } else {
+            initialRoot = getUserRootDirectory();
+        }
+        
+        CatOSFileChooserDialog dialog = new CatOSFileChooserDialog(this, initialRoot, editorCore.getCurrentFile());
+        dialog.setVisible(true);
+
+        File file = dialog.getSelectedFile();
+
+        if (file != null) {
             try {
                 editorCore.open(file);
                 textPane.setDocument(editorCore.getDocument());
@@ -288,28 +301,35 @@ public class ScribbleFrame extends JFrame {
         File file = editorCore.getCurrentFile();
 
         if (file == null || saveAs) {
-            fileChooser.setCurrentDirectory(getUserRootDirectory());
-        
-        if (file == null) {
-            File defaultFile = new File(getUserRootDirectory(), "Nuevo Documento.cat");
-            fileChooser.setSelectedFile(defaultFile);
-        } else {
-            
-            fileChooser.setSelectedFile(file);
-        }
-        
-        int option = fileChooser.showSaveDialog(this);
-        
-        if (option != JFileChooser.APPROVE_OPTION) {
-            return;
-        }
-        
-        file = fileChooser.getSelectedFile();
-            
-            String name = file.getName().toLowerCase();
-            if (!name.endsWith(".cat")) {
-                file = new File(file.getAbsolutePath() + ".cat");
+
+            String loggedInUsername = "admin";
+            if (SessionManager.isLoggedIn() && SessionManager.getCurrentUser() != null) {
+                loggedInUsername = SessionManager.getCurrentUser().getUsername();
             }
+
+            File initialRoot;
+            // La raíz del diálogo depende del usuario: Z:/ para admin, Z:/<user> para normal.
+            if ("admin".equals(loggedInUsername)) {
+                initialRoot = getPhysicalZRootDirectory();
+            } else {
+                initialRoot = getUserRootDirectory();
+            }
+
+            // 1. Mostrar la nueva ventana de "Guardar Como"
+            CatOSSaveAsDialog dialog = new CatOSSaveAsDialog(this, initialRoot);
+            dialog.setVisible(true);
+
+            // 2. Obtener el archivo final seleccionado/nombrado por el usuario
+            File selectedFile = dialog.getFinalSaveFile();
+
+            if (selectedFile == null) {
+                // El usuario presionó Cancelar o cerró la ventana
+                return;
+            }
+
+            // 3. Usar el archivo seleccionado para guardar
+            file = selectedFile;
+            // --- FIN LOGICA DE DIALOGO CUSTOMIZADO ---
         }
 
         try {
